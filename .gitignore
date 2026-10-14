@@ -16,3 +16,5 @@ ai-service/artifacts/*.joblib
 /server.log
 tests-e2e/report.json
 server/.env
+server/uploads-test/
+ai-service/artifacts/**/*.joblib
