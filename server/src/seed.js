@@ -25,18 +25,20 @@ const PRODUCT_TYPES = [
   PT('Yogurt (demo)', 'DAIRY', 4, 504, 75000, 1, 6, 60, 90),
 ];
 
-async function main() {
-  await connectDb();
+async function seedDemo({ resetPasswords = false, quiet = false } = {}) {
   const printed = [];
   const pw = (envVal, label) => { const v = envVal || crypto.randomBytes(9).toString('base64url') + 'a1'; if (!envVal) printed.push(label); return v; };
-  const adminPw = pw(process.env.SEED_ADMIN_PASSWORD, 'admin');
-  const demoPw = pw(process.env.SEED_DEMO_PASSWORD, 'demo');
+  const adminPw = pw(process.env.SEED_ADMIN_PASSWORD || (resetPasswords ? 'Admin@12345' : ''), 'admin');
+  const demoPw = pw(process.env.SEED_DEMO_PASSWORD || (resetPasswords ? 'Demo@12345' : ''), 'demo');
 
   const ensureOrg = async (name, type, country) => Organisation.findOneAndUpdate(
     { nameLower: name.toLowerCase(), type }, { $setOnInsert: { name, nameLower: name.toLowerCase(), type, country, publicName: name, status: 'ACTIVE' } }, { upsert: true, returnDocument: 'after' });
   const ensureUser = async (name, email, role, org, password) => {
     const ex = await User.findOne({ email });
-    if (ex) return { user: ex, created: false };
+    if (ex) {
+      if (resetPasswords) { ex.passwordHash = await bcrypt.hash(password, config.bcryptRounds); ex.status = 'ACTIVE'; ex.role = role; ex.organisation = org._id; await ex.save(); }
+      return { user: ex, created: false };
+    }
     return { user: await User.create({ name, email, role, organisation: org._id, status: 'ACTIVE', passwordHash: await bcrypt.hash(password, config.bcryptRounds) }), created: true };
   };
 
@@ -56,10 +58,16 @@ async function main() {
   for (const pt of PRODUCT_TYPES) await ProductType.updateOne({ name: pt.name }, { $setOnInsert: pt }, { upsert: true });
   await Threshold.updateOne({ key: 'global' }, { $setOnInsert: { key: 'global' } }, { upsert: true });
 
+  if (quiet) return created;
   console.log(`Seeded ${PRODUCT_TYPES.length} demonstration product types, thresholds, and accounts.`);
   if (!created.length) console.log('Accounts already existed; no passwords changed.');
   for (const c of created) console.log(`  ${c.role.padEnd(11)} ${c.email}  password: ${c.passwordSource === 'GENERATED' ? c.password : '(from environment)'}`);
   if (created.some((c) => c.passwordSource === 'GENERATED')) console.log('Generated passwords are shown ONCE; store them now.');
-  await mongoose.disconnect();
+  return created;
 }
-main().catch((e) => { console.error(e); process.exit(1); });
+
+module.exports = { seedDemo };
+
+if (require.main === module) {
+  connectDb().then(() => seedDemo({ resetPasswords: process.env.SEED_RESET_PASSWORDS === 'true' })).then(() => mongoose.disconnect()).catch((e) => { console.error(e); process.exit(1); });
+}

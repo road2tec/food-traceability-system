@@ -20,9 +20,7 @@ Node 20+ (tested 24), Python 3.10+, MongoDB 7 running on `127.0.0.1:27017`.
 ## Setup (PowerShell, from repo root)
 ```powershell
 # 1. Server
-cd server; npm install; copy .env.example .env
-#    edit .env: set JWT_SECRET, SEED_ADMIN_PASSWORD, SEED_DEMO_PASSWORD (min 10 chars, letter+digit)
-npm run seed          # admin + demo users + DEMONSTRATION product types
+cd server; npm install   # no .env needed; demo accounts are created when the API starts
 # 2. AI service
 cd ..\ai-service; py -3.10 -m venv .venv; .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 # 3. Client
@@ -55,3 +53,14 @@ Score > 60 → SAFE · 40–60 → FLAGGED · < 40 → QUARANTINED · prediction
 
 ## Status and known gaps
 See `docs/IMPLEMENTATION_STATUS.md`. The UI has been tested only with mocked API calls and a build/smoke check, not clicked through in a browser against the live API; analytics response shapes are matched by tolerant normalizers. Docker files are untested (Docker not installed). Not production-ready.
+
+## Demo logins (created automatically every time the API starts - no seeding or .env needed)
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@example.test | Admin@12345 |
+| Producer | producer@example.test | Demo@12345 |
+| Distributor | distributor@example.test | Demo@12345 |
+| Warehouse | warehouse@example.test | Demo@12345 |
+| Retailer | retailer@example.test | Demo@12345 |
+
+These are demo-only credentials. The API resets them to these values on each start in development. Open http://localhost:5180/login.

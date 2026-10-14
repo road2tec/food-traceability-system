@@ -23,20 +23,9 @@ cd food-traceability-system
 ```powershell
 cd server
 npm install
-copy .env.example .env
-notepad .env
-```
-In `.env` set (example dev values, change them if you like):
-```
-JWT_SECRET=any-long-random-string-at-least-32-chars
-SEED_ADMIN_PASSWORD=Admin@12345
-SEED_DEMO_PASSWORD=Demo@12345
-```
-Passwords need 10+ characters with a letter and a digit. Then:
-```powershell
-npm run seed        # creates admin + demo users + demo product types
 cd ..
 ```
+No .env file is needed: defaults are built in. Demo accounts and product types are created automatically when the API starts.
 
 ## 4. AI service (port 8001)
 ```powershell
@@ -74,8 +63,9 @@ Open **http://localhost:5180** (use `localhost`, not `127.0.0.1`).
 API docs: http://localhost:4000/api-docs. Health: http://localhost:4000/api/v1/health (server, mongo and ai should all be UP).
 
 ## 7. Demo logins
-Password = the value you put in `.env` (`SEED_ADMIN_PASSWORD` for admin, `SEED_DEMO_PASSWORD` for the others).
-`admin@example.test`, `producer@example.test`, `distributor@example.test`, `warehouse@example.test`, `retailer@example.test`
+Admin: admin@example.test / Admin@12345
+Producer, distributor, warehouse, retailer: producer@example.test, distributor@example.test, warehouse@example.test, retailer@example.test / Demo@12345
+(created automatically each time the API starts)
 
 ## 8. Try the full flow
 1. Log in as `producer@example.test`, register a batch.

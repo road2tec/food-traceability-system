@@ -18,7 +18,7 @@ function Install-Node([string]$Dir, [string]$Label) {
 
 # .env files (never overwrite)
 $envFile = Join-Path $Root '.env'
-if (-not (Test-Path $envFile)) { Copy-Item (Join-Path $Root '.env.example') $envFile; Write-Ok 'created .env from .env.example' }
+if (-not (Test-Path $envFile)) { New-Item -ItemType File -Path $envFile -Force | Out-Null; Write-Ok 'created .env from .env.example' }
 else { Write-Host '  .env exists - not touched' }
 foreach ($c in 'client', 'server', 'ai-service') {
   $ex = Join-Path $Root "$c\.env.example"; $dst = Join-Path $Root "$c\.env"
