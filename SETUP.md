@@ -46,7 +46,7 @@ python -m venv .venv
 cd ..
 ```
 
-## 5. Client (port 5173)
+## 5. Client (port 5180)
 ```powershell
 cd client
 npm install
@@ -67,10 +67,10 @@ npm start
 Window 3 - Web app:
 ```powershell
 cd client
-npm run dev -- --host localhost --port 5173
+npm run dev
 ```
 
-Open **http://localhost:5173** (use `localhost`, not `127.0.0.1`).
+Open **http://localhost:5180** (use `localhost`, not `127.0.0.1`).
 API docs: http://localhost:4000/api-docs. Health: http://localhost:4000/api/v1/health (server, mongo and ai should all be UP).
 
 ## 7. Demo logins
@@ -80,7 +80,7 @@ Password = the value you put in `.env` (`SEED_ADMIN_PASSWORD` for admin, `SEED_D
 ## 8. Try the full flow
 1. Log in as `producer@example.test`, register a batch.
 2. Add a checkpoint (temperature, humidity, location).
-3. Download the QR code; open `http://localhost:5173/verify/<batchId>` (public page, no login).
+3. Download the QR code; open `http://localhost:5180/verify/<batchId>` (public page, no login).
 4. Propose a custody transfer to the distributor; log in as the distributor and accept it.
 5. Use the simulator button to generate demo checkpoints.
 
@@ -100,7 +100,7 @@ Restart the API between e2e runs (the rate-limit test locks logins until restart
 - Login 429: restart the API (`npm start`).
 - Browser CORS errors: you opened `127.0.0.1`; use `localhost`.
 - Mongo connection refused: start the service: `Start-Service MongoDB` (admin PowerShell).
-- Port in use: `Get-NetTCPConnection -LocalPort 4000,5173,8001`.
+- Port in use: `Get-NetTCPConnection -LocalPort 4000,5180,8001`.
 - More in `docs/TROUBLESHOOTING.md`.
 
 Blockchain is out of scope; integrity is a local SHA-256 hash check. Freshness values use demonstration parameters and are not validated food-safety advice.

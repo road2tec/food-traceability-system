@@ -7,7 +7,7 @@ API contract: `../docs/API_CONTRACT.md`. The client only talks to `/api/v1` endp
 
 ```bash
 npm install          # install pinned dependencies
-npm run dev          # dev server on http://localhost:5173
+npm run dev          # dev server on http://localhost:5180
 npm run build        # production build into dist/
 npm run preview      # serve the production build
 npm test             # Vitest + React Testing Library (jsdom, axios mocked), single run

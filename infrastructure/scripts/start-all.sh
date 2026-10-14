@@ -19,11 +19,11 @@ else warn "ai-service venv missing - run setup.sh"; fi
 [ "$SEED" = 1 ] && "$(dirname "${BASH_SOURCE[0]}")/seed.sh"
 
 start_bg server "$ROOT/server" $NPM run start
-[ "$NOCLIENT" = 0 ] && start_bg client "$ROOT/client" $NPM run dev -- --host 127.0.0.1 --port 5173
+[ "$NOCLIENT" = 0 ] && start_bg client "$ROOT/client" $NPM run dev -- --host 127.0.0.1 --port 5180
 
 step "Waiting for health"
 FAIL=0
 if [ -n "$PY" ]; then wait_http http://127.0.0.1:8001/health 90 && ok "ai-service healthy" || { err "ai-service not healthy (.run/ai-service.err.log)"; FAIL=1; }; fi
 wait_http http://127.0.0.1:4000/api/v1/health 90 && ok "server healthy" || { err "server not healthy (.run/server.err.log)"; FAIL=1; }
-if [ "$NOCLIENT" = 0 ]; then wait_http http://127.0.0.1:5173/ 90 && ok "client up" || { err "client not up (.run/client.err.log)"; FAIL=1; }; fi
+if [ "$NOCLIENT" = 0 ]; then wait_http http://127.0.0.1:5180/ 90 && ok "client up" || { err "client not up (.run/client.err.log)"; FAIL=1; }; fi
 exit $FAIL

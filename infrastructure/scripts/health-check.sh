@@ -8,6 +8,6 @@ check() { # name url required
 }
 check "server /api/v1/health" http://127.0.0.1:4000/api/v1/health 1
 check "ai-service /health" http://127.0.0.1:8001/health 1
-check "client" http://127.0.0.1:5173/ 0
+check "client" http://127.0.0.1:5180/ 0
 curl -fsS -m 4 http://127.0.0.1:4000/api/v1/health 2>/dev/null && echo
 exit $FAIL

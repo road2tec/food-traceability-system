@@ -7,7 +7,7 @@ Software-only platform that tracks food batches from producer to consumer, predi
 ## Components
 | Dir | What | Port |
 |---|---|---|
-| `client/` | React + Vite + Tailwind UI | 5173 |
+| `client/` | React + Vite + Tailwind UI | 5180 |
 | `server/` | Express + MongoDB API (`/api/v1`, Swagger at `/api-docs`) | 4000 |
 | `ai-service/` | FastAPI: Arrhenius freshness engine, ML correction, simulator | 8001 |
 | `tests-e2e/` | End-to-end + security suite against the running stack | – |
@@ -33,7 +33,7 @@ cd ..\client; npm install
 ```powershell
 cd ai-service; .\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8001
 cd server;     npm start
-cd client;     npm run dev        # http://localhost:5173
+cd client;     npm run dev        # http://localhost:5180
 ```
 Demo logins (seeded, password = value you set in `server/.env`): `admin@example.test`, `producer@example.test`, `distributor@example.test`, `warehouse@example.test`, `retailer@example.test`.
 

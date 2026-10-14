@@ -1,6 +1,6 @@
 # Shared Contract (authoritative for all agents)
 
-Ports: client 5173 | server 4000 | ai-service 8001 | MongoDB 27017 (db `food_traceability`).
+Ports: client 5180 | server 4000 | ai-service 8001 | MongoDB 27017 (db `food_traceability`).
 Base: `/api/v1`. JSON. Auth: `Authorization: Bearer <jwt>`. Dates ISO-8601 UTC. Temperature °C, humidity % RH.
 
 ## Enums

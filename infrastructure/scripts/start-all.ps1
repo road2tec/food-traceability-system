@@ -23,8 +23,8 @@ Write-Step 'MongoDB'
 if (-not (Test-PortOpen 27017)) { Write-Err2 'MongoDB is not listening on 27017. Start the service (net start MongoDB) - see docs/TROUBLESHOOTING.md'; exit 1 }
 Write-Ok 'mongod reachable on 27017'
 
-$portNames = @{ 8001 = 'ai-service'; 4000 = 'server'; 5173 = 'client' }
-foreach ($p in 8001, 4000, 5173) {
+$portNames = @{ 8001 = 'ai-service'; 4000 = 'server'; 5180 = 'client' }
+foreach ($p in 8001, 4000, 5180) {
   $pf = Join-Path $RunDir ("{0}.pid" -f $portNames[$p])
   if ((Test-PortOpen $p) -and -not (Test-Path $pf)) {
     Write-Warn2 "port $p already in use by a process not started by this script"
@@ -43,12 +43,12 @@ if ($py) {
 if ($Seed) { & (Join-Path $PSScriptRoot 'seed.ps1') }
 
 Start-Bg 'server' 'npm.cmd' @('run', 'start') (Join-Path $Root 'server')
-if (-not $NoClient) { Start-Bg 'client' 'npm.cmd' @('run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173') (Join-Path $Root 'client') }
+if (-not $NoClient) { Start-Bg 'client' 'npm.cmd' @('run', 'dev', '--', '--host', '127.0.0.1', '--port', '5180') (Join-Path $Root 'client') }
 
 Write-Step 'Waiting for health'
 $ok = $true
 if ($py) { if (Wait-Http 'http://127.0.0.1:8001/health' 90) { Write-Ok 'ai-service healthy' } else { Write-Err2 'ai-service not healthy (see .run\ai-service.err.log)'; $ok = $false } }
 if (Wait-Http 'http://127.0.0.1:4000/api/v1/health' 90) { Write-Ok 'server healthy' } else { Write-Err2 'server not healthy (see .run\server.err.log)'; $ok = $false }
-if (-not $NoClient) { if (Wait-Http 'http://127.0.0.1:5173/' 90) { Write-Ok 'client up' } else { Write-Err2 'client not up (see .run\client.err.log)'; $ok = $false } }
+if (-not $NoClient) { if (Wait-Http 'http://127.0.0.1:5180/' 90) { Write-Ok 'client up' } else { Write-Err2 'client not up (see .run\client.err.log)'; $ok = $false } }
 if (-not $ok) { exit 1 }
-Write-Ok 'stack is up: client http://localhost:5173  api http://localhost:4000/api/v1  ai http://localhost:8001'
+Write-Ok 'stack is up: client http://localhost:5180  api http://localhost:4000/api/v1  ai http://localhost:8001'

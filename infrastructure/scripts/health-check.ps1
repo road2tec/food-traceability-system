@@ -4,7 +4,7 @@ param([int]$Wait = 0)
 $targets = @(
   @{ n = 'server /api/v1/health'; u = 'http://127.0.0.1:4000/api/v1/health'; req = $true },
   @{ n = 'ai-service /health';    u = 'http://127.0.0.1:8001/health';        req = $true },
-  @{ n = 'client';                u = 'http://127.0.0.1:5173/';              req = $false }
+  @{ n = 'client';                u = 'http://127.0.0.1:5180/';              req = $false }
 )
 $fail = 0
 foreach ($t in $targets) {
