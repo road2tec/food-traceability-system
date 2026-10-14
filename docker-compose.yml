@@ -1,0 +1,70 @@
+# UNTESTED: Docker is not installed on the authoring machine; this file was validated with a YAML parser only.
+# Blockchain (Fabric) is out of project scope; not part of this stack.
+# Usage: copy .env.example to .env, then `docker compose up --build`.
+name: food-traceability
+
+services:
+  mongo:
+    build: { context: ., dockerfile: infrastructure/docker/mongo.Dockerfile }
+    restart: unless-stopped
+    ports: ["27017:27017"]
+    volumes: ["mongo-data:/data/db"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  ai-service:
+    build: { context: ., dockerfile: infrastructure/docker/ai-service.Dockerfile }
+    restart: unless-stopped
+    ports: ["8001:8001"]
+    env_file: [.env]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8001/health',timeout=4).status==200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  server:
+    build: { context: ., dockerfile: infrastructure/docker/server.Dockerfile }
+    restart: unless-stopped
+    ports: ["4000:4000"]
+    env_file: [.env]
+    environment:
+      # Override host-style values from .env with in-network service names
+      MONGODB_URI: mongodb://mongo:27017/food_traceability
+      AI_SERVICE_URL: http://ai-service:8001
+      PORT: "4000"
+    volumes: ["uploads-data:/app/uploads"]
+    depends_on:
+      mongo: { condition: service_healthy }
+      ai-service: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4000/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  client:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/client.Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000/api/v1}
+    restart: unless-stopped
+    ports: ["5173:80"]
+    depends_on:
+      server: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:
+  uploads-data:

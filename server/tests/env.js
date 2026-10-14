@@ -1,0 +1,9 @@
+process.env.NODE_ENV = 'test';
+process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/food_traceability_test';
+process.env.BCRYPT_ROUNDS = '4';
+process.env.AI_SERVICE_URL = 'http://127.0.0.1:18001';
+process.env.AI_TIMEOUT_MS = '1500';
+process.env.JWT_SECRET = 'test-secret-test-secret-test-secret-123456';
+process.env.RATE_LIMIT_MAX = '100000';
+process.env.RATE_LIMIT_AUTH_MAX = '100000';
+process.env.UPLOAD_DIR = 'uploads-test';
